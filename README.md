@@ -15,6 +15,9 @@ Nota: Os tutoriais práticos de SO consistem num conjunto de exercícios prátic
 
 - Sistema operativo Linux 20.04 LTS (se não o tiverem disponível no vosso computador pessoal, podem utilizar os computadores do laboratório);
 
+## A Relembrar
+Visite o guião de Deteção de Erros onde se encontra uma secção sobre o uso de sanitizadores de código. Como iremos lidar com programas concorrentes aconselha-se a utilização do ThreadSanitizer. Para isto, note a ativação deste sanitizador com a opção -fsanitize na Makefile, para já vamos deixar este sanitizador em comentário.
+
 ## Tarefas e trinco lógico (mutex)
 
 Clone este repositório, usando o git: `git clone https://github.com/tecnico-so/lab_sincronizacao-seccoes-criticas.git`.
@@ -25,7 +28,11 @@ Aceda à diretoria com o comando:
 cd lab_sincronizacao-seccoes-criticas
 ```
 
-1. Abra o programa conta_partilhada.c no editor de texto á sua escolha e estude o seu conteúdo.
+1. Abra o programa conta_partilhada.c no editor de texto á sua escolha, por exemplo, o vscode e estude o seu conteúdo.
+    ```sh
+    cd src/
+    code contapartilhada.c
+    ```
 2. Compile este programa. Execute-o passando diferentes valores como argumento.
 Experimente com 100, 1000, 10000 e valores superiores.
 Para cada valor, experimente repetir a execução algumas vezes e observe se o resultado impresso é o mesmo.
@@ -43,7 +50,7 @@ Para cada valor, experimente repetir a execução algumas vezes e observe se o r
         pthread_mutex_t trinco = PTHREAD_MUTEX_INITIALIZER;
         ```
     - De seguida, use as funções pthread_mutex_lock e pthread_mutex_unlock para sincronizar as secções críticas que identificou.
-    - Compile e experimente o programa de maneira a confirmar que o erro grave que detetou na 2.b já não se verifica.
+    - Compile e experimente o programa de maneira a confirmar que o erro grave que detetou na 2.b já não se verifica, para tal, pode ativar o sanitizador ThreadSanitizer tirando a opção -fsanitize de comentário no Makefile.
 
 ## Tarefas e trinco read-write
 
@@ -64,7 +71,6 @@ Para cada valor, experimente repetir a execução algumas vezes e observe se o r
         - Experimente (i) simular atrasos crescentes no acesso em leitura/escrita à conta chamando a função sleep dentro das secções críticas e (ii) alterar o número de tarefas que executam consultar_conta().
         - Em que situações consegue observar ganhos de desempenho para a
         solução baseada em rwlocks?
-    
 
 
 ## Conclusão
