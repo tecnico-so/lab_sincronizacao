@@ -57,7 +57,8 @@ Para cada valor, experimente repetir a execução algumas vezes e observe se o r
 1. No mesmo programa, acrescente agora 4 tarefas (threads) que, no seu ciclo, se limitam a chamar a função consultar_conta. No ciclo da Alice e Bob, acrescente também  uma chamada à mesma função no final de cada iteração.
     - Caso não tenha antes sincronizado a secção crítica em consultar_conta (pois essa função antes não era invocada concorrentemente), lembre-se que agora tem de o fazer!
     - Com este novo programa, a função consultar_conta passa a ser aquela que é mais frequentemente executada no programa. Nota também que é uma função que apenas lê sobre dados partilhados (ou seja, nunca modifica dados partilhados). Assim sendo, o programa é um bom candidato a beneficiar do uso de um trinco de leitura-escrita (rwlock), em vez de um mutex.
-    Desenvolva um esquema de sincronização baseado em read-write locks que
+    - Para saber mais sobre trincos de leitura-escrita (rwlock) pode consutar o manual [link](https://man7.org/linux/man-pages/man3/pthread_rwlock_init.3p.html).
+    - Desenvolva um esquema de sincronização baseado em read-write locks que
     permita que o máximo número de tarefas possa executar em paralelo.
         - Para tal, passe a declarar um trinco deste novo tipo:
             ```
