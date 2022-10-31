@@ -52,7 +52,7 @@ Para cada valor, experimente repetir a execução algumas vezes e observe se o r
     - De seguida, use as funções pthread_mutex_lock e pthread_mutex_unlock para sincronizar as secções críticas que identificou.
     - Compile e experimente o programa de maneira a confirmar que o erro grave que detetou na 2.b já não se verifica, para tal, pode ativar o sanitizador ThreadSanitizer tirando a opção -fsanitize de comentário no Makefile.
 
-## Tarefas e trinco read-write
+## Tarefas e trinco de leitura-escrita (rwlock)
 
 1. No mesmo programa, acrescente agora 4 tarefas (threads) que, no seu ciclo, se limitam a chamar a função consultar_conta. No ciclo da Alice e Bob, acrescente também  uma chamada à mesma função no final de cada iteração.
     - Caso não tenha antes sincronizado a secção crítica em consultar_conta (pois essa função antes não era invocada concorrentemente), lembre-se que agora tem de o fazer!
