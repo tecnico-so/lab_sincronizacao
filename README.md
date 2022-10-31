@@ -7,7 +7,7 @@
 No final deste guião, deverá ser capaz de:
 
 - Saber identificar secções criticas em programas que utilizam threads.
-- Resolver estes problemas de sincronização de secções criticas usando as interfaces POSIX `mutex` e `read-write lock`
+- Resolver problemas de sincronização de secções criticas usando as interfaces POSIX `mutex` e `read-write lock`
 
 Nota: Os tutoriais práticos de SO consistem num conjunto de exercícios práticos que permitem aos alunos familiarizarem-se com um determinado tema que será necessário para resolver os projetos da disciplina. Os tutoriais podem ser resolvidos individualmente ou em grupo. A sua resolução é recomendada mas não obrigatória. Não são avaliados. Cada tutorial pressupõe que os exercícios são realizados numa interface de linha de comandos (shell) de um sistema Unix/Linux ou equivalente. Assume também que os alunos já resolveram os tutoriais anteriores.
 
