@@ -16,7 +16,7 @@ Nota: Os tutoriais práticos de SO consistem num conjunto de exercícios prátic
 - Sistema operativo Linux 20.04 LTS (se não o tiverem disponível no vosso computador pessoal, podem utilizar os computadores do laboratório);
 
 ## A Relembrar
-Visite o guião de Deteção de Erros onde se encontra uma secção sobre o uso de sanitizadores de código. Como iremos lidar com programas concorrentes aconselha-se a utilização do ThreadSanitizer. Para isto, note a ativação deste sanitizador com a opção -fsanitize na Makefile, para já vamos deixar este sanitizador em comentário.
+Visite o [guião de Deteção de Erros](github.com/tecnico-so/lab_detecao-erros) onde se encontra uma secção sobre o uso de sanitizadores de código. Como iremos lidar com programas concorrentes aconselha-se a utilização do ThreadSanitizer. Para isto, note a ativação deste sanitizador com a opção -fsanitize na Makefile, para já vamos deixar este sanitizador em comentário.
 
 ## Tarefas e trinco lógico (mutex)
 
@@ -34,8 +34,10 @@ Experimente com 100, 1000, 10000 e valores superiores.
 Para cada valor, experimente repetir a execução algumas vezes e observe se o resultado impresso é o mesmo.
     - Tente encontrar um exemplo em que, correndo duas vezes passando argumento idêntico, o Bob acaba por levantar diferentes montantes. Como explica este fenómeno?
     - Tente agora encontrar um exemplo em que o saldo final da conta não reflete o total depositado pela Alice subtraído pelo total gasto pelo Bob. Como explica este caso mais grave?
-3. Identifique as secções críticas neste programa.
-4. Resolva o problema de sincronização existente utilizando um trinco lógico (mutex).
+    - Tente encontrar um exemplo em que o número de operações feitos na conta não é a soma do número de operações feitas pela Alice e das operações feitas pelo Bob.
+3. Ligue o ThreadSanitizer, adicionando a flag `-fsanitize=thread` no Makefile. Recompile o programa, com `make clean all`, e corra novamente. O que consegue perceber do output do sanitizador?
+4. Identifique as secções críticas neste programa.
+5. Resolva o problema de sincronização existente utilizando um trinco lógico (mutex).
     - Para saber mais sobre trincos lógicos pode consutar o manual [link](https://man7.org/linux/man-pages/man3/pthread_mutex_lock.3p.html).
     - Pode declará-lo e inicializá-lo da seguinte forma:
 
@@ -51,7 +53,7 @@ Para cada valor, experimente repetir a execução algumas vezes e observe se o r
         ```
 
     - De seguida, use as funções `pthread_mutex_lock` e `pthread_mutex_unlock` para sincronizar as secções críticas que identificou.
-    - Compile e experimente o programa de maneira a confirmar que o erro grave que detetou na 2.b já não se verifica, para tal, pode ativar o sanitizador ThreadSanitizer tirando a opção -fsanitize de comentário no Makefile.
+    - Compile e experimente o programa de maneira a confirmar que o erro grave que detetou na 2.b já não se verifica, observando que o ThreadSanitizer já não reporta nenhum problema.
 
 ## Tarefas e trinco de leitura-escrita (rwlock)
 
