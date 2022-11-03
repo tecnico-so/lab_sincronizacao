@@ -3,6 +3,8 @@
 ######################
 # https://github.com/github/gitignore/blob/master/C.gitignore
 
+src/shared
+
 # Prerequisites
 *.d
 

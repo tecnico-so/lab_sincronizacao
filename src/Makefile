@@ -5,18 +5,13 @@
 #
 
 CC = gcc
-CFLAGS = -g -Wall -std=c17 #-fsanitize=thread
-TARGETS = contapartilhada
+CFLAGS = -g -Wall -std=c17
+#CFLAGS += -fsanitize=thread
+TARGETS = shared
 
-.PHONY: all clean contapartilhada.o contapartilhada
-
-contapartilhada: contapartilhada.o
-	$(CC) $(CFLAGS) contapartilhada.o -o contapartilhada -lpthread
-
-contapartilhada.o: contapartilhada.c
-	$(CC) $(CFLAGS) -c contapartilhada.c -o contapartilhada.o -lpthread
+.PHONY: all clean
 
 all: $(TARGETS)
 
 clean:
-	rm -f *.o $(TARGETS) 
+	rm -f *.o $(TARGETS)
