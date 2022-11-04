@@ -16,7 +16,7 @@ Nota: Os tutoriais práticos de SO consistem num conjunto de exercícios prátic
 - Sistema operativo Linux 20.04 LTS (se não o tiverem disponível no vosso computador pessoal, podem utilizar os computadores do laboratório);
 
 ## A Relembrar
-Visite o [guião de Deteção de Erros](github.com/tecnico-so/lab_detecao-erros) onde se encontra uma secção sobre o uso de sanitizadores de código. Como iremos lidar com programas concorrentes aconselha-se a utilização do ThreadSanitizer. Para isto, note a ativação deste sanitizador com a opção -fsanitize na Makefile, para já vamos deixar este sanitizador em comentário.
+Visite o [guião de Deteção de Erros](https://github.com/tecnico-so/lab_detecao-erros) onde se encontra uma secção sobre o uso de sanitizadores de código. Como iremos lidar com programas concorrentes aconselha-se a utilização do ThreadSanitizer. Para isto, note a ativação deste sanitizador com a opção -fsanitize na Makefile, para já vamos deixar este sanitizador em comentário.
 
 ## Tarefas e trinco lógico (mutex)
 
