@@ -77,7 +77,10 @@ Para cada valor, experimente repetir a execução algumas vezes e observe se o r
         - Em que situações consegue observar ganhos de desempenho para a
         solução baseada em rwlocks?
 
-
 ## Conclusão
 
 Concluindo este guião já sabes como sincronizar secções criticas usando mutexes e read-write locks.
+
+----
+
+Contactos para sugestões/correções: [LEIC-Alameda](mailto:leic-so-alameda@disciplinas.tecnico.ulisboa.pt), [LEIC-Tagus](mailto:leic-so-tagus@disciplinas.tecnico.ulisboa.pt), [LETI](mailto:leti-so-tagus@disciplinas.tecnico.ulisboa.pt)
