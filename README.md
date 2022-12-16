@@ -29,7 +29,7 @@ Aceda à diretoria com o comando:
 cd lab_sincronizacao
 ```
 
-1. Abra o programa `conta_partilhada.c` no editor de texto à sua escolha e estude o seu conteúdo.
+1. Abra o programa `shared.c` no editor de texto à sua escolha e estude o seu conteúdo.
 2. Compile este programa. Execute-o passando diferentes valores como argumento.
 Experimente com `100`, `1000`, `10000` e valores superiores.
 Para cada valor, experimente repetir a execução algumas vezes e observe se o resultado impresso é o mesmo.
