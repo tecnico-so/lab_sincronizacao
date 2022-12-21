@@ -1,8 +1,8 @@
-# Guião 5: Sincronização de secções críticas
+# Guião sobre sincronização de secções críticas
 
 ![IST](img/IST_DEI.png)
 
-## Objectivos
+## Objetivos
 
 No final deste guião, deverá ser capaz de:
 
