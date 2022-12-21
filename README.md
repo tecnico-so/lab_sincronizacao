@@ -65,7 +65,7 @@ O que consegue perceber do _output_ do sanitizador?
 1. No mesmo programa, acrescente agora 4 tarefas (_threads_) que, no seu ciclo, se limitam a chamar a função `account_print_info`.
 No ciclo da Alice e Bob, acrescente também uma chamada à mesma função no final de cada iteração.
     - Com este novo programa, a função `account_print_info` passa a ser aquela que é mais frequentemente executada no programa.
-    Notr também que é uma função que apenas lê sobre dados partilhados, ou seja, nunca modifica dados partilhados.
+    Note também que é uma função que apenas lê sobre dados partilhados, ou seja, nunca modifica dados partilhados.
     Assim sendo, o programa é um bom candidato a beneficiar do uso de um trinco de leitura-escrita (_read-write lock_), em vez de um _mutex_.
     - Para saber mais sobre trincos de leitura-escrita (_rwlock_) pode [consultar o manual](https://man7.org/linux/man-pages/man3/pthread_rwlock_init.3p.html).
     - Desenvolva um esquema de sincronização baseado em _read-write locks_ que permita que o máximo número de tarefas possa executar em paralelo.
