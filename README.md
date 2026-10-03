@@ -6,22 +6,28 @@
 
 No final deste guião, deverá ser capaz de:
 
-- saber identificar secções críticas em programas que utilizam _threads_;
-- resolver problemas de sincronização de secções críticas usando as interfaces POSIX para _mutex_ e _read-write lock_.
+- identificar secções críticas em programas que utilizam tarefas (*threads*);
+- interpretar os diagnósticos do *ThreadSanitizer*;
+- corrigir problemas de sincronização de secções críticas usando trincos lógicos (*mutex*);
+- distinguir situações em que um trinco de leitura-escrita (*read-write lock*) permite maior concorrência do que um *mutex*.
 
-## Requisitos
+### Antes de começar
 
-- Sistema operativo Linux Ubuntu 20.04 LTS (se não o tiverem disponível no vosso computador pessoal, podem utilizar os computadores do laboratório).
+*i)* Para os exemplos e o exercício vai precisar de um sistema operativo compatível com POSIX, como o Ubuntu Linux ou outro.
+Se ainda não o tiver disponível no seu computador pessoal, pode utilizar um dos computadores do laboratório.
 
-## A relembrar
+*ii)* Revisite o [guião sobre deteção de erros](https://github.com/tecnico-so/lab_detecao-erros) onde são apresentados os sanitizadores de código.
+Iremos utilizar o *ThreadSanitizer*.
 
-Visite o [guião sobre deteção de erros](https://github.com/tecnico-so/lab_detecao-erros) onde são apresentados os sanitizadores de código.
-Mais adiante, iremos utilizar o _ThreadSanitizer_ para ajudar com programas concorrentes.
-Para ativar o este sanitizador, usar a opção `-fsanitize` na `Makefile` que, para já, está comentada.
+*iii)* Para obter os exemplos de código, clone este repositório, usando o comando: ``git clone https://github.com/tecnico-so/lab_sincronizacao.git``
 
-## Tarefas e trinco lógico (_mutex_)
 
-Clone este repositório, usando: `git clone https://github.com/tecnico-so/lab_sincronizacao.git`.
+## 1. Tarefas 
+
+O exemplo de código é uma aplicação bancária onde dois utilizadores, Alice e Bob, acedem a uma conta partilhada.
+A Alice deposita dinheiro enquanto o Bob tenta levantá-lo.
+Estas operações são executadas por tarefas concorrentes que acedem à mesma conta. 
+O objetivo é garantir que, independentemente da ordem de execução das tarefas, os dados da conta permanecem coerentes.
 
 Aceda à diretoria com o comando:
 
@@ -29,64 +35,150 @@ Aceda à diretoria com o comando:
 cd lab_sincronizacao
 ```
 
-1. Abra o programa `shared.c` no editor de texto à sua escolha e estude o seu conteúdo.
-2. Compile este programa. Execute-o passando diferentes valores como argumento.
-Experimente com `100`, `1000`, `10000` e valores superiores.
-Para cada valor, experimente repetir a execução algumas vezes e observe se o resultado impresso é o mesmo.
-    - Tente encontrar um exemplo em que, correndo duas vezes passando argumento idêntico, o Bob acaba por levantar diferentes montantes.
-    Como explica este fenómeno?
-    - Tente agora encontrar um exemplo em que o saldo final da conta não reflete o total depositado pela Alice subtraído pelo total gasto pelo Bob.
-    Como explica este caso mais grave?
-    - Tente encontrar um exemplo em que o número de operações feitos na conta não é a soma do número de operações feitas pela Alice e das operações feitas pelo Bob.
-3. Ligue o _ThreadSanitizer_, adicionando a flag `-fsanitize=thread` na `Makefile`.
-Recompile o programa, com `make clean all`, e corra novamente.
-O que consegue perceber do _output_ do sanitizador?
-4. Identifique as secções críticas neste programa.
-5. Resolva o problema de sincronização existente utilizando um trinco lógico, chamado _mutex_ (abreviatura de _mutual exclusion_).
-    - Para saber mais sobre trincos lógicos pode [consultar o manual](https://man7.org/linux/man-pages/man3/pthread_mutex_lock.3p.html).
-    - Pode declará-lo e inicializá-lo da seguinte forma:
+**1.1.** Compreender o programa
 
-        ```c
-            pthread_mutex_t trinco;
-            pthread_mutex_init(&trinco, NULL);
-        ```
+Abra o ficheiro `shared.c` no editor de texto à sua escolha e estude o seu conteúdo.  
+Antes de executar o programa, responda:
 
-    - Ou simplesmente, se o trinco for global:
+**a)** O que representa o argumento passado ao programa na função `main`?
 
-        ```c
-        pthread_mutex_t trinco = PTHREAD_MUTEX_INITIALIZER;
-        ```
+**b)** Que função vai executar a tarefa da Alice e a do Bob?
 
-    - De seguida, use as funções `pthread_mutex_lock` e `pthread_mutex_unlock` para sincronizar as secções críticas que identificou.
-    - Compile e experimente o programa de maneira a confirmar que o erro grave que detetou no ponto 2 <!-- 2.b --> já não se verifica, observando que o _ThreadSanitizer_ já não reporta nenhum problema.
+**c)** Que dados são partilhados?
 
-## Tarefas e trinco de leitura-escrita (_rwlock_)
+**1.2.** Compile o programa.
 
-1. No mesmo programa, acrescente agora 4 tarefas (_threads_) que, no seu ciclo, se limitam a chamar a função `account_print_info`.
-No ciclo da Alice e Bob, acrescente também uma chamada à mesma função no final de cada iteração.
-    - Com este novo programa, a função `account_print_info` passa a ser aquela que é mais frequentemente executada no programa.
-    Note também que é uma função que apenas lê sobre dados partilhados, ou seja, nunca modifica dados partilhados.
-    Assim sendo, o programa é um bom candidato a beneficiar do uso de um trinco de leitura-escrita (_read-write lock_), em vez de um _mutex_.
-    - Para saber mais sobre trincos de leitura-escrita (_rwlock_) pode [consultar o manual](https://man7.org/linux/man-pages/man3/pthread_rwlock_init.3p.html).
-    - Desenvolva um esquema de sincronização baseado em _read-write locks_ que permita que o máximo número de tarefas possa executar em paralelo.
-        - Para tal, passe a declarar um trinco deste novo tipo:
+Execute-o passando diferentes valores como argumento.
 
-            ```c
-            pthread_rwlock_t rwl;
-            pthread_rwlock_init(&rwl, NULL);
-            ```
+```sh
+make
+./shared 100
+```
 
-        - E passe a usar as funções `pthread_rwlock_rdlock` e `pthread_rwlock_wrlock` sempre que se iniciar uma secção crítica de leitura-apenas ou uma secção crítica em que haja pelo menos uma escrita a dados partilhados (respetivamente).
-        Em ambos os casos, liberte as secções críticas com `pthread_rwlock_unlock.`
-    - Observe como muda o tempo de execução do programa ao usar mutexes e rwlocks.
-        - Experimente (i) simular atrasos crescentes no acesso em leitura/escrita à conta chamando a função [`sleep`](https://man7.org/linux/man-pages/man3/sleep.3.html) dentro das secções críticas e (ii) alterar o número de tarefas que consultam a conta.
-        - Em que situações consegue observar ganhos de desempenho para a solução baseada em _rwlocks_?
+Experimente executar o programa com `1000` e valores superiores.
+
+Para cada valor, repita a execução algumas vezes e compare os resultados.
+
+**a)** Tente encontrar duas execuções com o mesmo argumento em que o Bob consiga levantar montantes diferentes. 
+Como explica esta diferença?
+
+**b)** Tente encontrar uma execução em que o saldo final da conta não corresponda ao total depositado pela Alice menos o total levantado pelo Bob. 
+Como explica este resultado?
+
+**c)** Tente encontrar uma execução em que o número de operações registado na conta não corresponda à soma das operações realizadas pela Alice e pelo Bob. 
+O que aconteceu?
+
+**1.3.** Ativar o _ThreadSanitizer_.
+
+Pretende-se adicionar a *flag* de compilação `-fsanitize=thread` na `Makefile`.
+Existe uma linha comentada preparada para esse efeito.
+
+Recompile e execute novamente o programa:
+
+```sh
+make clean all
+./shared 1000
+```
+
+Analise os diagnósticos apresentados pelo *ThreadSanitizer*.
+
+**a)** Que dados partilhados aparecem nos diagnósticos?
+
+**b)** Que acessos concorrentes são assinalados?
+
+**1.4.** Identifique as secções críticas neste programa.
+
+Uma secção crítica é uma região de código que acede a dados partilhados e que necessita de sincronização para impedir que acessos concorrentes incompatíveis deixem esses dados num estado inconsistente.
+
+Para cada secção crítica, indique:
+
+- os dados partilhados a que acede;
+- se esses dados são apenas lidos ou também modificados.
+
+## 2. Trinco lógico (*mutex*)
+
+Um trinco lógico (*mutex*, de *mutual exclusion*, exclusão mútua em português) é um mecanismo de sincronização que permite a apenas uma tarefa de cada vez aceder a uma secção crítica.
+Cada tarefa deve adquirir o trinco antes de aceder aos dados partilhados e libertá-lo quando termina.
+Enquanto o trinco estiver ocupado, as outras tarefas que tentem adquiri-lo ficam à espera, evitando acessos simultâneos que possam tornar os dados incoerentes.
+
+Pode consultar a documentação de [pthread_mutex_lock](https://man7.org/linux/man-pages/man3/pthread_mutex_lock.3p.html) para saber mais detalhes.
+
+**2.1.** Crie uma nova versão do programa no ficheiro `shared_mutex.c`.
+Atualize a `Makefile`.
+
+Resolva o problema de sincronização existente utilizando um trinco lógico.
+
+**a)** Pode declarar e inicializar o trinco da seguinte forma:
+
+```c
+    pthread_mutex_t trinco;
+    pthread_mutex_init(&trinco, NULL);
+```
+
+Ou, se o trinco for global, da seguinte forma numa só linha:
+
+```c
+pthread_mutex_t trinco = PTHREAD_MUTEX_INITIALIZER;
+```
+
+**b)** Use as funções `pthread_mutex_lock` à entrada e `pthread_mutex_unlock` à saída para sincronizar as secções críticas que identificou.
+
+**c)** Compile e execute repetidamente o programa com diferentes valores. 
+Confirme que os resultados se mantêm coerentes.
+
+**2.2.** Execute novamente o programa com o *ThreadSanitizer*.
+
+Confirme que este já não assinala os problemas de sincronização corrigidos.
+
+## 3. Tarefas e trinco de leitura-escrita (*rwlock*)
+
+O *mutex* permite garantir a exclusão mútua, mas limita a concorrência em situações em que algumas das tarefas pretendiam apenas consultar dados.
+
+Um trinco de leitura-escrita (*read-write lock*) coordena o acesso a dados partilhados de forma a permitir que várias tarefas os possam ler em simultâneo, mas exige acesso exclusivo quando uma tarefa os pretende alterar.
+Enquanto um escritor detém o trinco, nenhuma outra tarefa pode ler ou escrever os dados protegidos.
+Este mecanismo pode melhorar o desempenho quando as leituras são mais frequentes do que as escritas.
+
+Para saber mais sobre trincos de leitura-escrita (*rwlock*) pode [consultar o manual](https://man7.org/linux/man-pages/man3/pthread_rwlock_init.3p.html).
+
+**3.1.** Crie uma nova versão do programa no ficheiro chamado `shared_rwlock.c`.
+Atualize a `Makefile`.
+
+Acrescente agora 4 tarefas (*threads*) que, no seu ciclo, se limitam a chamar a função `account_print_info`.
+
+No ciclo da Alice e do Bob, acrescente também uma chamada à mesma função no final de cada iteração.
+
+Com este novo programa, a função `account_print_info` passa a ser aquela que é mais frequentemente executada no programa.
+Note também que é uma função que apenas lê dados partilhados, ou seja, nunca modifica dados partilhados.
+Assim sendo, o programa é um bom candidato a beneficiar do uso de um trinco de leitura-escrita (*read-write lock*), em vez de um *mutex*.
+
+
+**3.2.** Desenvolva um esquema de sincronização baseado em *read-write locks* que permita que o maior número possível de tarefas possa executar em paralelo.
+
+Pode declarar um trinco deste novo tipo da seguinte forma:
+
+```c
+    pthread_rwlock_t rwl;
+    pthread_rwlock_init(&rwl, NULL);
+```
+
+Passe a usar as funções `pthread_rwlock_rdlock` (aceder para leitura) e `pthread_rwlock_wrlock` (aceder para escrita) sempre que se iniciar uma secção crítica de leitura-apenas ou uma secção crítica em que haja pelo menos uma escrita a dados partilhados (respetivamente).
+
+Em ambos os casos, liberte o trinco com `pthread_rwlock_unlock.`
+
+**3.3.** Observe como muda o tempo de execução do programa ao usar *mutexes* e *rwlocks*.
+
+Experimente (i) simular atrasos crescentes no acesso em leitura/escrita à conta chamando a função [`sleep`](https://man7.org/linux/man-pages/man3/sleep.3.html) dentro das secções críticas e (ii) alterar o número de tarefas que consultam a conta.
+
+Em que situações consegue observar ganhos de desempenho para a solução baseada em *rwlocks*?
 
 ## Conclusão
 
-Uma secção crítica de um programa acede a um ou mais recursos partilhados por várias tarefas e necessita de ser protegida de modo a garantir o acesso em exclusão mútua, ou seja, é preciso garantir que apenas uma tarefa pode executar essa parte do código de cada vez.
-Um mecanismo que permite garantir a exclusão mútua é um _mutex_.
-Um outro mecanismo que também permite é o _rwlock_, com a diferença que permite diferenciar acessos de leitura e de escrita, tornando possível ter vários leitores na secção crítica ao mesmo tempo ou então apenas um escritor.
+Uma secção crítica executada por uma tarefa acede a dados partilhados e necessita de sincronização adequada para preservar a coerência desses dados.
+
+Um *mutex* fornece acesso exclusivo à região protegida: apenas uma tarefa pode executar essa região de cada vez.
+
+Um *read-write lock* distingue acessos de leitura e de escrita, o que pode permitir vários leitores em simultâneo, mas apenas um escritor de cada vez, sem leitores ativos.
+Esta abordagem pode aumentar a concorrência quando as operações de leitura são significativamente mais frequentes do que as operações de escrita.
 
 ----
 
